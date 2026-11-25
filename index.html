@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>基礎能力検査 実践練習</title>
+<style>
+:root{--bg:#eef2f7;--ink:#14213d;--muted:#5b6b82;--card:#fff;--line:#c9d3e0;--acc:#1d4ed8;--accbg:#e3ebff;--ok:#15803d;--ng:#b91c1c;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1724;--ink:#e6edf7;--muted:#93a3bb;--card:#17233a;--line:#2b3a55;--acc:#7aa2ff;--accbg:#22345a;--ok:#4ade80;--ng:#f87171;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1724;--ink:#e6edf7;--muted:#93a3bb;--card:#17233a;--line:#2b3a55;--acc:#7aa2ff;--accbg:#22345a;--ok:#4ade80;--ng:#f87171;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",system-ui,sans-serif;line-height:1.6}
+main{max-width:520px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:8px 0 4px}
+p{margin:6px 0;color:var(--muted);font-size:15px}
+.top{display:flex;justify-content:space-between;align-items:baseline}
+.time{font-size:44px;font-weight:700;font-variant-numeric:tabular-nums}
+.time.low{color:var(--ng)}
+.cnt{font-size:18px;color:var(--muted);font-variant-numeric:tabular-nums}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin:4px 0 14px}
+.bar i{display:block;height:100%;width:100%;background:var(--acc)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.cat{font-size:14px;color:var(--acc);font-weight:700}
+.rule{font-size:15px;background:var(--accbg);border-radius:8px;padding:6px 10px;margin:8px 0}
+.q{font-size:30px;font-weight:600;text-align:center;margin:18px 0 8px;font-variant-numeric:tabular-nums;word-break:break-all}
+.q.sm{font-size:21px;font-weight:500;text-align:left;line-height:1.7}
+.pair{display:grid;gap:6px;font-family:ui-monospace,Menlo,Consolas,"Noto Sans JP",monospace;letter-spacing:.1em;margin-top:8px}
+.pair span{display:block;padding:8px;border:1px dashed var(--line);border-radius:8px;font-size:24px;word-break:break-all}
+.ch{display:grid;gap:10px;grid-template-columns:1fr 1fr;margin-top:16px}
+.ch.c3{grid-template-columns:repeat(3,1fr)}
+.ch.w4{grid-template-columns:repeat(4,1fr)}
+button{font:inherit;font-size:22px;font-weight:600;min-height:60px;border-radius:10px;border:2px solid var(--acc);background:var(--card);color:var(--ink);cursor:pointer;font-variant-numeric:tabular-nums;padding:6px}
+.ch button.t{font-size:17px}
+button:active{background:var(--accbg)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+button.go{display:block;width:100%;margin-top:12px;background:var(--acc);color:#fff;border-color:var(--acc)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) button.go{color:#0f1724}}
+:root[data-theme="dark"] button.go{color:#0f1724}
+button.sub{display:block;width:100%;margin-top:12px}
+button.skip{font-size:16px;min-height:44px;border-width:1px;border-color:var(--line);color:var(--muted);font-weight:500}
+.ni{display:flex;gap:10px;margin-top:16px}
+.ni input{flex:1;min-width:0;font:inherit;font-size:28px;padding:8px 12px;border:2px solid var(--acc);border-radius:10px;background:var(--card);color:var(--ink);font-variant-numeric:tabular-nums}
+.ni button.go{width:auto;margin:0;padding:0 22px}
+.g{display:grid;grid-template-columns:repeat(3,22px);gap:2px}
+.g.big{grid-template-columns:repeat(3,38px);gap:3px}
+.g i{display:block;width:22px;height:22px;background:var(--line);border-radius:3px}
+.g.big i{width:38px;height:38px}
+.g i.on{background:var(--ink)}
+.ch .g{justify-content:center;margin:4px auto}
+.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.stat div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+.stat b{display:block;font-size:26px;font-variant-numeric:tabular-nums}
+.stat small{color:var(--muted)}
+table{width:100%;border-collapse:collapse;margin:8px 0;font-size:15px}
+td,th{padding:6px 4px;border-bottom:1px solid var(--line);text-align:left}
+.wr{font-size:14px;padding:8px 0;border-bottom:1px solid var(--line);color:var(--muted)}
+.wr b{color:var(--ng)}
+.wr em{font-style:normal;color:var(--ok);font-weight:700}
+.wr .g{display:inline-grid;vertical-align:middle;margin:2px 4px}
+</style></head><body><main id="app"></main>
+<script>
+const app=document.getElementById('app');
+const R=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const sh=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=R(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const P1=a=>a[R(0,a.length-1)];
+const uq=(c,pool)=>sh([c,...sh([...new Set(pool)].filter(x=>x!==c)).slice(0,3)]);
+let S=null;
+/* ---- 言語 ---- */
+const ANT=[['拡大','縮小'],['増加','減少'],['賛成','反対'],['成功','失敗'],['権利','義務'],['抽象','具体'],['楽観','悲観'],['主観','客観'],['原因','結果'],['需要','供給']];
+const SYN=[['援助','支援'],['至急','早急'],['承諾','了承'],['手本','模範'],['欠点','短所'],['特色','特徴'],['任務','職務'],['範囲','領域']];
+const IDM=[['危機一髪','髪',['発','法','般']],['五里霧中','霧',['夢','務','無']],['責任転嫁','嫁',['稼','家','加']],['単刀直入','単',['短','担','探']],['意味深長','深',['心','真','慎']],['付和雷同','雷',['来','礼','頼']],['不言実行','実',['事','真','失']],['換骨奪胎','骨',['肉','格','滑']],['首尾一貫','貫',['関','慣','寛']],['大器晩成','晩',['満','免','早']],['一朝一夕','夕',['石','昔','汐']],['有名無実','実',['美','物','失']],['支離滅裂','滅',['減','威','裂']],['二束三文','束',['速','足','即']],['異口同音','異',['意','以','移']],['我田引水','我',['戒','成','戈']],['破顔一笑','顔',['願','頭','額']],['起承転結','転',['伝','展','点']],['前代未聞','聞',['門','問','間']],['試行錯誤','錯',['作','策','昨']],['天衣無縫','縫',['逢','峰','蜂']]];
+const KEI=[['お客様が会議室に（　）。','いらっしゃる',['参る','伺う','申し上げる']],['私が明日、資料を（　）。','お届けする',['お届けになる','いらっしゃる','召し上がる']],['部長が資料を（　）。','ご覧になる',['拝見する','伺う','いただく']],['私は明日、取引先の方に（　）。','お目にかかる',['お会いになる','いらっしゃる','おっしゃる']]];
+function mLang(){const t=R(0,3);
+  if(t<2){const L=t?SYN:ANT,p=P1(L),f=R(0,1),w=p[f],a=p[1-f],ch=uq(a,L.flat().filter(x=>x!==w));
+    return{h:`「${w}」の${t?'類義語':'対義語'}は？`,s:w+(t?'の類義語':'の対義語'),ch,a:ch.indexOf(a),sm:1,tx:1}}
+  if(t==2){const[w,c,d]=P1(IDM),ch=sh([c,...d]);
+    return{h:`四字熟語の（　）に入る正しい漢字は？<br>${w.replace(c,'（　）')}`,s:w,ch,a:ch.indexOf(c),sm:1}}
+  const k=P1(KEI),ch=sh([k[1],...k[2]]);
+  return{h:k[0],s:k[0],ch,a:ch.indexOf(k[1]),sm:1,tx:1,rule:'正しい敬語を選ぶ'}}
+/* ---- 数・論理 ---- */
+function mCalc(num){const t=R(0,6);let a,b,c,d,v,q;
+  if(t==0){a=R(11,25);b=R(3,6);c=R(10,50);v=a*b+c;q=`${a} × ${b} + ${c}`}
+  else if(t==1){a=R(11,40);b=R(11,40);c=R(2,5);v=(a+b)*c;q=`(${a} + ${b}) × ${c}`}
+  else if(t==2){a=R(30,99);b=R(20,80);c=R(10,40);v=a+b-c;q=`${a} + ${b} − ${c}`}
+  else if(t==3){b=R(2,6);c=R(5,30);a=b*R(10,30);v=a/b+c;q=`${a} ÷ ${b} + ${c}`}
+  else if(t==4){a=R(13,30);b=R(3,6);c=R(3,9);d=R(2,4);v=a*b-c*d;q=`${a} × ${b} − ${c} × ${d}`}
+  else if(t==5){a=R(100,300);b=R(10,60);c=R(10,60);v=a-b-c;q=`${a} − ${b} − ${c}`}
+  else{a=R(12,49);b=R(3,9);v=a*b;q=`${a} × ${b}`}
+  if(num)return{h:q+' = ?',s:q,num:1,v};
+  const ch=uq(v,[v+1,v-1,v+10,v-10,v+2,v-2,v+9,v-9].filter(x=>x>0)).map(String);
+  return{h:q+' = ?',s:q,ch,a:ch.indexOf(String(v))}}
+function mSeq(num){const t=R(0,2);let s,v;
+  if(t==0){const a=R(2,20),d=R(2,9);s=[0,1,2,3,4].map(i=>a+d*i);v=a+d*5}
+  else if(t==1){const a=R(1,5),r=R(2,3);s=[0,1,2,3].map(i=>a*r**i);v=a*r**4}
+  else{const d=R(1,3);let x=R(1,9);s=[x];for(let i=0;i<4;i++){x+=d+i;s.push(x)}v=x+d+4}
+  const h=s.join('、')+'、？',o={h,s:s.join(','),rule:'？に入る数は？'};
+  if(num)return{...o,num:1,v};
+  const ch=uq(v,[v+1,v-1,v+2,v-2,v+3,v+10,v-10].filter(x=>x>0)).map(String);
+  return{...o,ch,a:ch.indexOf(String(v))}}
+function mLogic(){const N=['A','B','C','D'],o=sh(N),st=sh([0,1,2]).map(i=>`${o[i]}は${o[i+1]}より背が高い。`),top=R(0,1)==0,a=top?o[0]:o[3];
+  return{h:st.join('<br>'),s:o.join('＞'),ch:N,a:N.indexOf(a),w4:1,sm:1,rule:top?'一番背が高いのは？':'一番背が低いのは？'}}
+function mPct(){const a=R(4,30)*100,p=P1([10,20,30,40]),v=a*(100-p)/100;
+  return{h:`${a}円の商品が${p}％引きのとき、代金は何円？`,s:`${a}円の${p}％引き`,num:1,v,sm:1}}
+function mNum(){return P1([()=>mCalc(0),()=>mCalc(1),()=>mCalc(1),()=>mSeq(0),()=>mSeq(1),mLogic,mPct])()}
+/* ---- 空間 ---- */
+const cw=p=>p.map((_,i)=>p[(2-i%3)*3+(i/3|0)]),ccw=p=>p.map((_,i)=>p[(i%3)*3+(2-(i/3|0))]),
+  r180=p=>p.map((_,i)=>p[8-i]),mir=p=>p.map((_,i)=>p[(i/3|0)*3+(2-i%3)]),mud=p=>p.map((_,i)=>p[(2-(i/3|0))*3+i%3]);
+const G=(p,big)=>`<div class="g${big?' big':''}">${p.map(x=>`<i class="${x?'on':''}"></i>`).join('')}</div>`;
+function mRot(){let p,V;
+  for(;;){p=Array(9).fill(0);sh([0,1,2,3,4,5,6,7,8]).slice(0,R(3,4)).forEach(i=>p[i]=1);
+    V=[p,cw(p),ccw(p),r180(p),mir(p),mud(p)].map(x=>x.join(''));if(new Set(V).size==6)break}
+  const[lab,f]=P1([['右に90°回転させた図は？',cw],['左に90°回転させた図は？',ccw],['180°回転させた図は？',r180],['左右を反転させた図は？',mir]]),
+    c=f(p).join(''),ch=sh([c,...sh(V.filter(x=>x!==c)).slice(0,3)]);
+  return{h:`<div style="display:flex;justify-content:center;margin:8px 0 4px">${G(p,1)}</div>`,raw:1,s:lab,rule:lab,ch:ch.map(s=>G([...s].map(Number))),a:ch.indexOf(c)}}
+function mMove(){const D={上:[0,1],下:[0,-1],右:[1,0],左:[-1,0]},K=Object.keys(D),F=(x,y)=>`${x>=0?'右'+x:'左'+(-x)}・${y>=0?'上'+y:'下'+(-y)}`;
+  let x,y,st;do{x=0;y=0;st=[];for(let i=R(3,4);i>0;i--){const k=P1(K),m=R(1,3);x+=D[k][0]*m;y+=D[k][1]*m;st.push(k+m)}}while(!x&&!y);
+  const c=F(x,y),ch=uq(c,[F(-x,y),F(x,-y),F(y,x),F(x+1,y),F(x,y+1),F(x-1,y)].filter(s=>s!==c));
+  return{h:`出発点から${st.join('、')}の順に進みます。<br>終点は出発点から見てどこ？`,s:st.join('、'),ch,a:ch.indexOf(c),sm:1,tx:1,rule:'上2＝上に2マス進む'}}
+function mSpace(){return P1([mRot,mRot,mMove])()}
+/* ---- 知覚の正確さ ---- */
+function mut(a){const r=[...a];let i;do{i=R(0,r.length-1)}while(r[i]=='-'||r[i]==' ');
+  const o=r[i];r[i]=/\d/.test(o)?String((+o+R(1,9))%10):/[a-z]/.test(o)?'abcdefgmnrstk'[R(0,12)]:o==='@'?'#':'山川田島中本林'[R(0,6)];if(r[i]===o)r[i]='〇';return r.join('')}
+const POOL=['松山市湊町','愛媛県人事課','総務管理局','会計年度任用','事務補助職員','南予地方局','中予地方局','東予地方局','人事委員会','出納局'];
+function mAt(){let a;const x=Math.random();
+  if(x<.4){a=Array.from({length:R(6,9)},()=>R(0,9)).join('');a=a.slice(0,3)+'-'+a.slice(3)}
+  else if(x<.7)a=P1(POOL)+' '+R(1,9)+'-'+R(1,20);
+  else a=sh([...'abcdefgmnrstk']).slice(0,5).join('')+'@'+R(10,99)+'-'+'xyz'[R(0,2)];
+  const same=Math.random()<.5,b=same?a:mut(a);
+  return{h:`<div class="pair"><span>${a}</span><span>${b}</span></div>`,raw:1,s:a+' ／ '+b,ch:['同じ','違う'],a:same?0:1,rule:'左右が同じなら「同じ」、違えば「違う」'}}
+function mErr(){const cs='@#%$*!?+=~^_;:|/2358AEK',a=Array.from({length:7},()=>cs[R(0,cs.length-1)]),k=R(0,3),b=[...a];
+  sh([0,1,2,3,4,5,6]).slice(0,k).forEach(i=>{let c;do{c=cs[R(0,cs.length-1)]}while(c===a[i]);b[i]=c});
+  return{h:`<div class="pair"><span>${a.join(' ')}</span><span>${b.join(' ')}</span></div>`,raw:1,s:a.join('')+' ／ '+b.join(''),ch:['0','1','2','3'],a:k,w4:1,rule:'原本と写しで違う箇所はいくつ？'}}
+function mCnt(){let t,a,k;do{t=R(2,9);a=Array.from({length:R(11,15)},()=>R(1,9));k=a.filter(x=>x==t).length}while(k<1||k>5);
+  const ch=[...new Set([k,...sh([0,1,2,3,4,5,6].filter(x=>x!==k)).slice(0,3)])].sort((x,y)=>x-y).map(String);
+  return{h:`<div class="pair"><span>${a.join(' ')}</span></div>`,raw:1,s:a.join('')+'の「'+t+'」',ch,a:ch.indexOf(String(k)),w4:1,rule:`「${t}」はいくつある？`}}
+function mPerc(){return P1([mAt,mErr,mCnt])()}
+/* ---- 進行 ---- */
+let LAST={n:40,only:null,retry:false},BAD=[];
+function begin(qs,ms){S={qs:sh(qs),i:0,total:ms,end:Date.now()+ms,done:false};S.t=setInterval(tick,250);draw()}
+function start(n,only){LAST={n,only:only||null,retry:false};
+  const per=only?n:n/4,gens=[['言語',mLang],['数・論理',mNum],['空間',mSpace],['知覚の正確さ',mPerc]].filter(g=>!only||g[0]===only),qs=[];
+  gens.forEach(([c,g])=>{for(let i=0;i<per;i++){const q=g();q.c=c;qs.push(q)}});
+  begin(qs,qs.length*30000)}
+function retryBad(){LAST.retry=true;begin(BAD.map(q=>{const c={...q};delete c.p;delete c.ok;return c}),BAD.length*45000)}
+function draw(){const q=S.qs[S.i],cls=(q.c3?' c3':'')+(q.w4?' w4':'');
+  const body=q.num?`<div class="ni"><input id="ni" inputmode="numeric" autocomplete="off" aria-label="答え"><button class="go" id="ok">回答</button></div>`
+   :`<div class="ch${cls}">${q.ch.map((x,i)=>`<button${q.tx?' class="t"':''} data-i="${i}">${x}</button>`).join('')}</div>`;
+  app.innerHTML=`<div class="top"><div class="time" id="tm"></div><div class="cnt">${S.i+1} / ${S.qs.length}</div></div><div class="bar"><i id="bf"></i></div>
+  <section class="card"><div class="cat">${q.c}${q.num?'（数値を入力）':''}</div>${q.rule?`<div class="rule">${q.rule}</div>`:''}
+  ${q.raw?q.h:`<div class="q${q.sm?' sm':''}">${q.h}</div>`}${body}</section><button class="sub skip" id="sk">スキップ</button>`;
+  app.querySelectorAll('.ch button').forEach(b=>b.onclick=()=>pick(+b.dataset.i));
+  document.getElementById('sk').onclick=next;
+  if(q.num){document.getElementById('ok').onclick=sub;document.getElementById('ni').focus()}
+  tick()}
+function next(){S.i++;S.i>=S.qs.length?finish():draw()}
+function pick(i){if(!S||S.done)return;const q=S.qs[S.i];q.p=i;q.ok=i===q.a;next()}
+function sub(){const v=document.getElementById('ni').value.trim();if(!v)return;const q=S.qs[S.i];q.p=v;q.ok=parseInt(v,10)===q.v;next()}
+function tick(){if(!S||S.done)return;const l=S.end-Date.now();if(l<=0){finish();return}
+  const tm=document.getElementById('tm'),bf=document.getElementById('bf');if(!tm)return;
+  const s=Math.ceil(l/1000);tm.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');tm.className='time'+(s<=60?' low':'');
+  bf.style.width=(l/S.total*100)+'%'}
+function finish(){if(S.done)return;S.done=true;clearInterval(S.t);
+  const an=S.qs.filter(q=>q.p!==undefined),ok=an.filter(q=>q.ok).length,n=S.qs.length,bad=an.filter(q=>!q.ok);
+  const A=q=>q.num?q.p:q.ch[q.p],C=q=>q.num?q.v:q.ch[q.a];
+  BAD=bad;const rows=['言語','数・論理','空間','知覚の正確さ'].filter(c=>S.qs.some(q=>q.c===c)).map(c=>{const a=an.filter(q=>q.c===c),k=a.filter(q=>q.ok).length,t=S.qs.filter(q=>q.c===c).length;
+    return`<tr><td>${c}</td><td>${k} / ${a.length}</td><td>${a.length?Math.round(k/a.length*100)+'%':'−'}</td><td>${t-a.length}</td></tr>`}).join('');
+  app.innerHTML=`<h1>${LAST.retry?'間違えた問題の復習':LAST.only?LAST.only+'の練習':'結果'}</h1><p>${n}問中、${an.length}問に解答しました。</p>
+  <div class="stat"><div><b>${ok}</b><small>正解</small></div><div><b>${an.length?Math.round(ok/an.length*100):0}%</b><small>正答率</small></div><div><b>${n-an.length}</b><small>未解答</small></div></div>
+  <table><tr><th>分野</th><th>正解/解答</th><th>正答率</th><th>未解答</th></tr>${rows}</table>
+  ${bad.length?`<button class="go" onclick="retryBad()">間違えた${bad.length}問だけもう一度</button>`:''}${LAST.retry?'':`<button class="${bad.length?'sub':'go'}" onclick="start(LAST.n,LAST.only)">新しい問題でもう一度</button>`}<button class="sub" onclick="home()">最初に戻る</button>
+  <h1 style="font-size:18px;margin-top:20px">間違えた問題（${bad.length}）</h1>
+  ${bad.map(q=>`<div class="wr">${q.c}｜${q.s}<br><b>あなた：${A(q)}</b>　<em>正解：${C(q)}</em></div>`).join('')||'<p>全問正解です。</p>'}`;
+  S=null;window.scrollTo(0,0)}
+function home(){S=null;app.innerHTML=`<h1>基礎能力検査 実践練習</h1>
+  <p>言語・数・論理・空間・知覚の正確さの4分野を、同じ数ずつランダムに出題します。選択式のほか、数値を入力する記述式も出ます。</p>
+  <p>本番形式は40問・20分です。問題数は確認できていないため、1問30秒の想定で作っています。わからない問題はスキップして進みましょう。</p>
+  <button class="go" onclick="start(40)">本番形式　40問・20分</button>
+  <h1 style="font-size:17px;margin-top:20px">分野ごとに練習（各10問・5分）</h1>
+  <div class="ch" style="margin-top:8px"><button onclick="start(10,'言語')">言語</button><button onclick="start(10,'数・論理')">数・論理</button><button onclick="start(10,'空間')">空間</button><button onclick="start(10,'知覚の正確さ')">知覚の正確さ</button></div>
+  ${BAD.length?`<button class="go" onclick="retryBad()">間違えた${BAD.length}問を復習</button>`:''}
+  <button class="sub" onclick="start(12)">お試し　12問・6分</button>
+  <p style="margin-top:16px">練習用の問題です。実際の試験と内容が異なる場合があります。</p>`}
+document.addEventListener('keydown',e=>{if(!S||S.done)return;const q=S.qs[S.i];
+  if(q.num){if(e.key==='Enter')sub()}else if(/^[1-4]$/.test(e.key)&&q.ch[+e.key-1]!==undefined)pick(+e.key-1)});
+home();
+</script></body></html>
